@@ -1,3 +1,5 @@
+// Bloxy Interpreter
+
 const opCodes = require('./opCodes');
 
 const EXECUTION_COMPLETE = 'Exited with code 0';
@@ -57,20 +59,51 @@ class Interpreter {
           case opCodes.AND:
           case opCodes.OR:
           
-            const a = this.state.stack.pop();           // The `a` variable always corresponds to the latest value added to the stack
-            const b = this.state.stack.pop();           // In the case of a code such as ['PUSH', 2, 'PUSH', 3] => a == 3 and b == 2
+            let a = this.state.stack.pop();             // The `a` variable always corresponds to the latest value added to the stack
+            let b = this.state.stack.pop();             // In the case of a code such as ['PUSH', 2, 'PUSH', 3] then a = 3 and b = 2
+
+            // Add support for ASCII arythmetics
+            //
+            // Check if `a` and/or `b` are a Char
+            // If so, get the ascii value. Do the mathmatic operation, return final value.
+            // If the value on the stack is a string, get the ascii value of the first letter and perform the same operation
+             
+            if (typeof a == 'string' || a instanceof String) {
+              a = a.charCodeAt(0);
+            }
+
+            if (typeof b == 'string' || b instanceof String) {
+              b = b.charCodeAt(0);
+            }
 
             let result;
 
             if (opCode === opCodes.ADD) result = a + b;
             if (opCode === opCodes.SUB) result = a - b;
             if (opCode === opCodes.MUL) result = a * b;
-            if (opCode === opCodes.DIV) result = a / b;
+
+            // Check for division by 0
+            if (b !== 0) {
+              if (opCode === opCodes.DIV) result = a / b;
+            
+            } else {
+              throw new Error("Division by 0 caught");
+            }
+            
+            
             if (opCode === opCodes.LT) result = a < b ? 1 : 0;
             if (opCode === opCodes.GT) result = a > b ? 1 : 0;
             if (opCode === opCodes.EQ) result = a === b ? 1 : 0;
-            if (opCode === opCodes.AND) result = a && b;
-            if (opCode === opCodes.OR) result = a || b;
+
+            // Only allow logic operations if the values on the stack are boolean values
+            if ((a === 1 || a === 0) && (b === 1 || b === 0)){
+
+              if (opCode === opCodes.AND) result = a && b;
+              if (opCode === opCodes.OR) result = a || b;
+            
+            } else { // Else, throw error
+              throw new Error(`Two boolean arguments expected, got: ${a}, ${b}`);
+            }
 
             this.state.stack.push(result);
             break;
@@ -81,6 +114,10 @@ class Interpreter {
 
           case opCodes.JUMPI:
             const condition = this.state.stack.pop();
+            
+            if (condition !== 0 || 1) {
+              throw new Error(`JUMPI only accepts boolean values, but ${condition} was passed`);
+            }
 
             if (condition === 1) {
               this.jump();
@@ -106,9 +143,10 @@ class Interpreter {
 
 // Code testing
 
-const code = ['PUSH', 0, 'PUSH'];
+const code = ['PUSH', 0, 'PUSH', 1, 'DIV', 'STOP'];
 try {
-  new Interpreter().runCode(code);
+  result = new Interpreter().runCode(code);
+  console.log(result);
 } catch (error){
   console.log(error)
 }
