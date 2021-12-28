@@ -1,5 +1,6 @@
 const opCodes = require('./opCodes');
 
+const EXECUTION_COMPLETE = 'Exited with code 0';
 class Interpreter {
   constructor() {
     this.state = {
@@ -12,6 +13,10 @@ class Interpreter {
   // Jump helper method
   jump() {
     const destination = this.state.stack.pop(); // Get destination of the jump 
+
+    if (destination < 0 || destination > this.state.code.length) { // Validate the destination of the jump
+      throw new Error(`Invalid JUMP destination: ${destination}.`);
+    }
 
     this.state.programCounter = destination; // Set the program counter to the destination
     this.state.programCounter--; // Since the PC (program counter) is incremented in every iterarion we must decrement it
@@ -29,10 +34,15 @@ class Interpreter {
         switch (opCode) {
 
           case opCodes.STOP: // Halts execution
-            throw new Error('Execution complete');
+            throw new Error(EXECUTION_COMPLETE);
           
           case opCodes.PUSH: // Pushes a value to the stack
             this.state.programCounter++;
+
+            if (this.state.programCounter === this.state.code.length) { // If the PUSH instruction is last in the code, there is nothing to PUSH. So, return error
+              throw new Error(`No value passed to PUSH instruction. PUSH instruction cannot be last.`)
+            }
+
             const value = this.state.code[this.state.programCounter];
             this.state.stack.push(value);
             break;
@@ -81,7 +91,12 @@ class Interpreter {
             break;
         }
       } catch (error) {
-        return this.state.stack[this.state.stack.length-1];
+
+        if (error.message === EXECUTION_COMPLETE) { // Check if the code correctly exited before returning final stack value
+          return this.state.stack[this.state.stack.length-1];
+        }
+
+        throw error;
       }
 
       this.state.programCounter++; // Increment program counter
@@ -89,6 +104,11 @@ class Interpreter {
   }
 }
 
-const code = ['PUSH', 8, 'PUSH', 1, 'JUMPI', 'PUSH', 0, 'JUMP', 'PUSH', 'jump successful', 'STOP'];
-const result = new Interpreter().runCode(code);
-console.log(`Result of JUMP: `, result)
+// Code testing
+
+const code = ['PUSH', 0, 'PUSH'];
+try {
+  new Interpreter().runCode(code);
+} catch (error){
+  console.log(error)
+}
