@@ -8,7 +8,7 @@ class Interpreter {
     this.state = {
       programCounter: 0,
       stack: [],
-      code: []
+      code: []  
     };
   }
 
@@ -83,12 +83,16 @@ class Interpreter {
             if (opCode === opCodes.MUL) result = a * b;
 
             // Check for division by 0
-            if (b !== 0) {
-              if (opCode === opCodes.DIV) result = a / b;
+            if (opCode === opCodes.DIV) {
+              if (b !== 0) {
+                result = a / b; 
+
+              } else {
+
+                throw new Error("Division by 0 caught");
+              } 
             
-            } else {
-              throw new Error("Division by 0 caught");
-            }
+            } 
             
             
             if (opCode === opCodes.LT) result = a < b ? 1 : 0;
@@ -96,13 +100,14 @@ class Interpreter {
             if (opCode === opCodes.EQ) result = a === b ? 1 : 0;
 
             // Only allow logic operations if the values on the stack are boolean values
-            if ((a === 1 || a === 0) && (b === 1 || b === 0)){
+            if (opCode === opCodes.AND || opCode === opCodes.OR) {
+              if (typeof !!a === 'boolean' && typeof !!b === 'boolean'){
 
-              if (opCode === opCodes.AND) result = a && b;
-              if (opCode === opCodes.OR) result = a || b;
-            
-            } else { // Else, throw error
-              throw new Error(`Two boolean arguments expected, got: ${a}, ${b}`);
+                opCode === opCodes.AND ? result = a && b : result = a || b;
+              
+              } else { // Else, throw error
+                throw new Error(`Two boolean arguments expected, got: ${a}, ${b}`);
+              }
             }
 
             this.state.stack.push(result);
@@ -115,13 +120,15 @@ class Interpreter {
           case opCodes.JUMPI:
             const condition = this.state.stack.pop();
             
-            if (condition !== 0 || 1) {
-              throw new Error(`JUMPI only accepts boolean values, but ${condition} was passed`);
-            }
+            if (condition === 0 || condition === 1) {
 
-            if (condition === 1) {
-              this.jump();
-              break;
+              if (condition === 1) {
+                this.jump();
+                break;
+              }
+            
+            } else {
+              throw new Error(`JUMPI only accepts boolean values, but ${condition} was passed`);
             }
 
           default:
@@ -141,9 +148,11 @@ class Interpreter {
   }
 }
 
+module.exports = Interpreter;
+
 // Code testing
 
-const code = ['PUSH', 0, 'PUSH', 1, 'DIV', 'STOP'];
+const code = ['PUSH', 99, 'JUMP', 'PUSH', 0, 'JUMP', 'PUSH', '0x0', 'STOP'];
 try {
   result = new Interpreter().runCode(code);
   console.log(result);

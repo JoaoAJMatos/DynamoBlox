@@ -1,0 +1,22 @@
+{
+  "name": "dynamoblox",
+  "version": "0.0.1",
+  "description": "A decentralized VM that serves as a platform for building decentralized applications.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --watchAll"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/JoaoAJMatos/DynamoBlox.git"
+  },
+  "author": "JoaoAJMatos",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/JoaoAJMatos/DynamoBlox/issues"
+  },
+  "homepage": "https://github.com/JoaoAJMatos/DynamoBlox#readme",
+  "dependencies": {
+    "jest": "^27.4.5"
+  }
+}
