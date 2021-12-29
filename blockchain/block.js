@@ -56,10 +56,3 @@ class Block {
 }
 
 module.exports = Block;
-
-const block = Block.mineBlock({
-    lastBlock: Block.genesis(),
-    beneficiary: 'dynamo'
-});
-
-console.log('[+] BLOCK: ', block);
