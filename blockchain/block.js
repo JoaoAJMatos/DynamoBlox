@@ -64,6 +64,41 @@ class Block {
     static genesis() { // Returns the GENESIS Block
         return new this(GENESIS_DATA);
     }
+
+    static validateBlock({ lastBlock, block }) {
+        return new Promise((resolve, reject) => {
+
+            if (keccakHash(block) === keccakHash(Block.genesis())) {
+                return resolve();
+            }
+            
+            if (keccakHash(lastBlock.blockHeaders) !== block.blockHeaders.parentHash) {
+                return reject(new Error("The parent hash must be the hash of the last block's headers."));
+            }
+
+            if (block.blockHeaders.height !== lastBlock.blockHeaders.height + 1) {
+                return reject(new Error('The block height must be higher than the previous block height.'));
+            }
+
+            if (Math.abs(lastBlock.blockHeaders.difficulty - block.blockHeaders.difficulty) > 1) {
+                return reject(new Error('Difficulty jump found. The difficulty must only adjust by 1. '))
+            }
+
+            const target = Block.calculateBlockTargetHash({ lastBlock });
+            const { blockHeaders } = block;
+            const { nonce } = blockHeaders;
+            const truncatedBlockHeaders = { ...blockHeaders };
+            delete truncatedBlockHeaders.nonce;
+            const header = keccakHash(truncatedBlockHeaders);
+            const underTargetHash = keccakHash(header + nonce);
+
+            if (underTargetHash > target) {
+                return reject(new Error("The block does not meet the proof of work requirement."));
+            }
+
+            return resolve();
+        });
+    }
 }
 
 module.exports = Block;
