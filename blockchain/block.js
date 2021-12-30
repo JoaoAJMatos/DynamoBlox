@@ -81,7 +81,7 @@ class Block {
             }
 
             if (Math.abs(lastBlock.blockHeaders.difficulty - block.blockHeaders.difficulty) > 1) {
-                return reject(new Error('Difficulty jump found. The difficulty must only adjust by 1. '))
+                return reject(new Error('Difficulty jump found. The difficulty must only adjust by 1.'))
             }
 
             const target = Block.calculateBlockTargetHash({ lastBlock });

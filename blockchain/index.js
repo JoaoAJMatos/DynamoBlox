@@ -6,7 +6,20 @@ class Blockchain {
     }
 
     addBlock({ block }) {
-        this.chain.push(block);
+        return new Promise((resolve, reject) => {
+            
+            Block.validateBlock({ 
+                lastBlock: this.chain[this.chain.length - 1],
+                block
+
+            }).then(() => { // If the block validation is successful, the new block can be added to the chain
+
+                this.chain.push(block);
+
+                return resolve();
+            
+            }).catch(error => reject(error)); // If the validation is unsuccessful, return error
+        });
     }
 }
 
