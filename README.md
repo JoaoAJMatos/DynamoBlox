@@ -20,23 +20,18 @@ In order to create and run the smart contracts, DynamoBlox needs a special virtu
 
 Following are the instructions (OpCodes) supported by the DBVM:
 
-> Util
-- `STOP`
-- `PUSH`
-
-> Mathematics
-- `ADD`
-- `SUB`
-- `MUL`
-- `DIV`
-
-> Comparisons
-- `LT`
-- `GT`
-- `EQ`
-- `AND`
-- `OR`
-
->Moving
-- `JUMP`
-- `JUMPI`
+| OpCode  | Description                              |
+|---------|------------------------------------------|
+| `STOP`  | Halts program execution                  |
+| `PUSH`  | Pushes a word to the stack               |
+| `ADD`   | Addition operation                       |
+| `SUB`   | Subtraction operation                    |
+| `MUL`   | Multiplication operation                 |
+| `DIV`   | Division operation                       |
+| `LT`    | Less-than comparison                     |
+| `GT`    | Greater-than comparison                  |
+| `EQ`    | Equality comparison                      |
+| `AND`   | Bitwise AND operation                    |
+| `OR`    | Bitwise OR operation                     |
+| `JUMP`  | Alter program counter                    |
+| `JUMPI` | Conditionally alter the program counter  |
