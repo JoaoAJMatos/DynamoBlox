@@ -18,7 +18,7 @@ Bitcoin and many other cryptocurrencies also relie on the same basic principles 
 
 In order to create and run the smart contracts, DynamoBlox needs a special virtual environment, just like Java. The code executed by the DynamoBlox's VM (DBVM) is written in a language called Bloxy which includes a various set of instructions to perform mathmatical operations, loops, conditionality and more.
 
-Following are the instructions (OpCodes) supported by the DBVM as of 01-02-2022:
+Following are the instructions (OpCodes) supported by the DBVM:
 
 | OpCode  | Description                              |
 |---------|------------------------------------------|
