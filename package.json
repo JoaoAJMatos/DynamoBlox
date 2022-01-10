@@ -4,7 +4,9 @@
   "description": "A decentralized VM that serves as a platform for building decentralized applications.",
   "main": "index.js",
   "scripts": {
-    "test": "jest --watchAll"
+    "dev": "nodemon --ignore ./data ./api ",
+    "test": "jest --watchAll",
+    "start": "node ./api"
   },
   "repository": {
     "type": "git",
@@ -21,5 +23,8 @@
     "fs-extra": "^10.0.0",
     "jest": "^27.4.5",
     "js-sha3": "^0.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.15"
   }
 }
